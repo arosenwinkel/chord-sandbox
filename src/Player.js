@@ -16,21 +16,19 @@ export class Player extends React.Component {
     play() {
         this.stop();
 
-        const sequence = [
-            new Chunk("C", "3", "M", "2n"),
-            new Chunk("F", "2", "M", "4n"),
-            new Chunk("G", "2", "7", "4n")
-        ];
+        const chunks = this.props.sequence.map((s) => {
+            // console.log(s);
+            return new Chunk(s)
+        });
 
         let timeSoFar = new Tone.Time(0);
 
-        const events = sequence.map((s) => {
-            const result = {"time": timeSoFar, "notes": s.notes, "duration": s.duration};
-            timeSoFar += new Tone.Time(s.duration);
+        const events = chunks.map((c) => {
+            const duration = c.getDuration();
+            const result = {"time": timeSoFar, "notes": c.getNotes(), "duration": duration};
+            timeSoFar += new Tone.Time(duration);
             return result;
         });
-
-        // console.log(events);
 
         let part = new Tone.Part(
             (time, value) => {
@@ -39,8 +37,8 @@ export class Player extends React.Component {
             events
         );
 
-        const loopEndTime = sequence.map(
-            (s) => {return new Tone.Time(s.duration)}
+        const loopEndTime = chunks.map(
+            (c) => {return new Tone.Time(c.getDuration())}
         ).reduce(
             (acc, s) => {return (acc || 0) + s}
         );
