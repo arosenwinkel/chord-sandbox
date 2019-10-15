@@ -1,23 +1,51 @@
 import React from 'react';
 import Tone from 'tone';
+import {chord} from "@tonaljs/chord";
+import {toMidi} from "@tonaljs/midi";
 import {Chunk} from "./Chunk";
+import MIDISounds from 'midi-sounds-react';
+
+const voices = Object.freeze({
+    SYNTH: 1,
+    GUITAR: 2,
+    PIANO: 3
+});
 
 export class Player extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-
+            voice: voices.SYNTH
         }
 
         this.synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+    }
+
+    doChord(chord, duration, timelinePos) {
+        const notes = chord.getNotes();
+
+        if (this.state.voice == voices.SYNTH) {
+            this.synth.triggerAttackRelease(notes, duration, timelinePos);
+            return;
+        }
+
+        const midiNotes = notes.map((n) => toMidi(n));
+        const durationInSeconds = Tone.Time(duration).toSeconds();
+
+        if (this.state.voice == voices.GUITAR) {
+            this.midiSounds.playStrumDownNow(269, midiNotes, durationInSeconds);
+        }
+        else if (this.state.voice == voices.PIANO) {
+            this.midiSounds.playStrumDownNow(3, midiNotes, durationInSeconds);
+        }
     }
 
     play() {
         this.stop();
 
         const chunks = this.props.sequence.map((s) => {
-            // console.log(s);
+            console.log(s);
             return new Chunk(s)
         });
 
@@ -25,14 +53,14 @@ export class Player extends React.Component {
 
         const events = chunks.map((c) => {
             const duration = c.getDuration();
-            const result = {"time": timeSoFar, "notes": c.getNotes(), "duration": duration};
+            const result = {"time": timeSoFar, "chord": c, "duration": duration};
             timeSoFar += new Tone.Time(duration);
             return result;
         });
 
         let part = new Tone.Part(
             (time, value) => {
-                this.synth.triggerAttackRelease(value.notes, value.duration, time);
+                this.doChord(value.chord, value.duration, time);
             }, 
             events
         );
@@ -61,8 +89,26 @@ export class Player extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={() => this.play()}>Play!</button>
-                <button onClick={() => this.stop()}>Stop</button>
+                <div className="controls">
+                    <button onClick={() => this.play()}>Play!</button>
+                    <button onClick={() => this.stop()}>Stop</button>
+                </div>
+                <form className="voiceSelector">
+                    VOICE SELECTOR
+                    <label>
+                        <input type="radio" value="synth" checked={this.state.voice === voices.SYNTH} onChange={() => this.setState({voice: voices.SYNTH})} />
+                        SYNTH
+                    </label>
+                    <label>
+                        <input type="radio" value="guitar" checked={this.state.voice === voices.GUITAR} onChange={() => this.setState({voice: voices.GUITAR})} />
+                        GUITAR
+                    </label>
+                    <label>
+                        <input type="radio" value="piano" checked={this.state.voice === voices.PIANO} onChange={() => this.setState({voice: voices.PIANO})} />
+                        PIANO
+                    </label>
+                </form>
+                <MIDISounds ref={(ref) => (this.midiSounds = ref)} appElementName="root" instruments={[3, 269]} />
             </div>
         );
     }
