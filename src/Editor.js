@@ -3,17 +3,19 @@ import ReactDOM from "react-dom";
 import {Chunk} from "./Chunk";
 import {Player} from "./Player";
 
+const defaultSequence = [
+    {"root": "D", "octave": "3", "details": "M", "duration": "2n"},
+    {"root": "A", "octave": "3", "details": "M", "duration": "2n"},
+    {"root": "B", "octave": "3", "details": "m", "duration": "2n"},
+    {"root": "G", "octave": "3", "details": "M", "duration": "2n"}
+];
+
 export class Editor extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            sequence: [
-                {"root": "D", "octave": "3", "details": "M", "duration": "2n"},
-                {"root": "A", "octave": "3", "details": "M", "duration": "2n"},
-                {"root": "B", "octave": "3", "details": "m", "duration": "2n"},
-                {"root": "G", "octave": "3", "details": "M", "duration": "2n"}
-            ]
+            sequence: [...defaultSequence]
         }
     }
 
@@ -39,6 +41,10 @@ export class Editor extends React.Component {
         this.setState(sequence);
     }
 
+    handleReset() {
+        this.setState({sequence: [...defaultSequence]});
+    }
+
     renderChunks() {
         const items = this.state.sequence.map((c, i) => {
             return (
@@ -54,10 +60,13 @@ export class Editor extends React.Component {
         });
 
         return (
-            <ul>
-                {items}
-                <li><button onClick={() => {this.onAdd()}}>Add</button></li>
-            </ul>
+            <div>
+                <ul>
+                    {items}
+                    <li><button onClick={() => {this.onAdd()}}>Add</button></li>
+                </ul>
+                <button onClick={() => this.handleReset()}>Reset</button>
+            </div>
         );
     }
 
