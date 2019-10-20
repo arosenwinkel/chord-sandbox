@@ -13,9 +13,9 @@ const detailsMapping = {
 };
 
 const durationMapping = {
-    "Quarter Note": "1n",
+    "Quarter Note": "4n",
     "Half Note": "2n",
-    "Whole Note": "4n",
+    "Whole Note": "1n",
     "Something else...": "SOMETHING ELSE"
 };
 
@@ -75,7 +75,7 @@ export class Chunk extends React.Component {
     handleDetails(event) {
         event.preventDefault();
         const value = event.target.value;
-        this.setState({showDetailsSomethingElse: value == "SOMETHING ELSE"});
+        this.setState({showDetailsSomethingElse: value === "SOMETHING ELSE"});
 
         if (this.state.showDetailsSomethingElse) return;
 
@@ -91,7 +91,7 @@ export class Chunk extends React.Component {
     handleDuration(event) {
         event.preventDefault();
         const value = event.target.value;
-        this.setState({showDurationSomethingElse: value == "SOMETHING ELSE"});
+        this.setState({showDurationSomethingElse: value === "SOMETHING ELSE"});
 
         if (this.state.showDurationSomethingElse) return;
 
@@ -106,6 +106,7 @@ export class Chunk extends React.Component {
     render() {
         return (
             <div>
+                <button onClick={() => this.props.handlePlay(this.props.idx)}>Play</button>
                 <label>
                     Root:
                     <select value={this.props.root} onChange={(e) => this.handleRoot(e)} >

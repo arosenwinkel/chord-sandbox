@@ -25,7 +25,7 @@ export class Player extends React.Component {
     doChord(chord, duration, timelinePos) {
         const notes = chord.getNotes();
 
-        if (this.state.voice == voices.SYNTH) {
+        if (this.state.voice === voices.SYNTH) {
             this.synth.triggerAttackRelease(notes, duration, timelinePos);
             return;
         }
@@ -33,10 +33,10 @@ export class Player extends React.Component {
         const midiNotes = notes.map((n) => toMidi(n));
         const durationInSeconds = Tone.Time(duration).toSeconds();
 
-        if (this.state.voice == voices.GUITAR) {
+        if (this.state.voice === voices.GUITAR) {
             this.midiSounds.playStrumDownNow(269, midiNotes, durationInSeconds);
         }
-        else if (this.state.voice == voices.PIANO) {
+        else if (this.state.voice === voices.PIANO) {
             this.midiSounds.playStrumDownNow(3, midiNotes, durationInSeconds);
         }
     }
@@ -45,7 +45,6 @@ export class Player extends React.Component {
         this.stop();
 
         const chunks = this.props.sequence.map((s) => {
-            console.log(s);
             return new Chunk(s)
         });
 
