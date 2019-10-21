@@ -1,46 +1,56 @@
 import React from 'react';
+// @ts-ignore
 import Tone from 'tone';
+
 import {toMidi} from "@tonaljs/midi";
 import {Chunk} from "./Chunk";
+
+// @ts-ignore
 import MIDISounds from 'midi-sounds-react';
-import {array} from "prop-types";
 
-const voices = Object.freeze({
-    SYNTH: 1,
-    GUITAR: 2,
-    PIANO: 3
-});
+enum Voice {
+    SYNTH,
+    GUITAR,
+    PIANO
+};
 
-export class Player extends React.Component {
+interface PlayerProps {
+    sequence: any[]
+}
+
+interface PlayerState {
+    voice: Voice
+}
+
+export class Player extends React.Component<PlayerProps, PlayerState> {
+    synth: Tone.PolySynth;
+    midiSounds: any;
+
     state = {
-        voice: voices.SYNTH
+        voice: Voice.SYNTH
     }
 
-    constructor(props) {
+    constructor(props: PlayerProps) {
         super(props);
 
         this.synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
     }
 
-    static propTypes = {
-        sequence: array.isRequired
-    }
-
-    doChord(chord, duration, timelinePos) {
+    doChord(chord: any, duration: string, timelinePos: any) {
         const notes = chord.getNotes();
 
-        if (this.state.voice === voices.SYNTH) {
+        if (this.state.voice === Voice.SYNTH) {
             this.synth.triggerAttackRelease(notes, duration, timelinePos);
             return;
         }
 
-        const midiNotes = notes.map((n) => toMidi(n));
+        const midiNotes = notes.map((n: string) => toMidi(n));
         const durationInSeconds = Tone.Time(duration).toSeconds();
 
-        if (this.state.voice === voices.GUITAR) {
+        if (this.state.voice === Voice.GUITAR) {
             this.midiSounds.playStrumDownNow(269, midiNotes, durationInSeconds);
         }
-        else if (this.state.voice === voices.PIANO) {
+        else if (this.state.voice === Voice.PIANO) {
             this.midiSounds.playStrumDownNow(3, midiNotes, durationInSeconds);
         }
     }
@@ -62,7 +72,7 @@ export class Player extends React.Component {
         });
 
         let part = new Tone.Part(
-            (time, value) => {
+            (time: any, value: any) => {
                 this.doChord(value.chord, value.duration, time);
             }, 
             events
@@ -99,20 +109,20 @@ export class Player extends React.Component {
                 <form className="voiceSelector">
                     VOICE SELECTOR
                     <label>
-                        <input type="radio" value="synth" checked={this.state.voice === voices.SYNTH} onChange={() => this.setState({voice: voices.SYNTH})} />
+                        <input type="radio" value="synth" checked={this.state.voice === Voice.SYNTH} onChange={() => this.setState({voice: Voice.SYNTH})} />
                         SYNTH
                     </label>
                     <label>
-                        <input type="radio" value="guitar" checked={this.state.voice === voices.GUITAR} onChange={() => this.setState({voice: voices.GUITAR})} />
+                        <input type="radio" value="guitar" checked={this.state.voice === Voice.GUITAR} onChange={() => this.setState({voice: Voice.GUITAR})} />
                         GUITAR
                     </label>
                     <label>
-                        <input type="radio" value="piano" checked={this.state.voice === voices.PIANO} onChange={() => this.setState({voice: voices.PIANO})} />
+                        <input type="radio" value="piano" checked={this.state.voice === Voice.PIANO} onChange={() => this.setState({voice: Voice.PIANO})} />
                         PIANO
                     </label>
                 </form>
                 <div style={{display: "none"}}>
-                    <MIDISounds ref={(ref) => (this.midiSounds = ref)} appElementName="root" instruments={[3, 269]} />
+                    <MIDISounds ref={(ref: any) => (this.midiSounds = ref)} appElementName="root" instruments={[3, 269]} />
                 </div>
             </div>
         );

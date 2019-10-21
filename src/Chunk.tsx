@@ -1,9 +1,10 @@
 import React from 'react';
 import {chord} from "@tonaljs/chord";
-import Tone from 'tone';
-import {string, func, number} from "prop-types";
 
-const detailsMapping = {
+// @ts-ignore
+import Tone from 'tone';
+
+const detailsMapping: Record<string, string> = {
     "Major": "M", "Minor": "m", "Dominant Seventh": "7", 
     "Diminished": "dim", "Augmented": "aug",
     "Major Seventh": "Maj7", "Fifth": "5",
@@ -12,28 +13,36 @@ const detailsMapping = {
     "Something else...": "SOMETHING ELSE"
 };
 
-const durationMapping = {
+const durationMapping: Record<string, string> = {
     "Quarter Note": "4n",
     "Half Note": "2n",
     "Whole Note": "1n",
     "Something else...": "SOMETHING ELSE"
 };
 
-export class Chunk extends React.Component {
+interface ChunkState {
+    showDetailsSomethingElse: boolean,
+    showDurationSomethingElse: boolean
+}
+
+interface ChunkProps {
+    root: string,
+    modifier?: string,
+    octave: number,
+    details: string,
+    duration: string,
+    handleDelete: (idx: number) => void,
+    handleSubmit: (idx: number, data: any) => void,
+    handlePlay: (idx: number) => void,
+    handleMoveUp: (idx: number) => void,
+    handleMoveDown: (idx: number) => void,
+    idx: number
+}
+
+export class Chunk extends React.Component<ChunkProps, ChunkState> {
     state = {
         showDetailsSomethingElse: false,
         showDurationSomethingElse: false
-    }
-
-    static propTypes = {
-        root: string.isRequired,
-        modifier: string,
-        octave: string.isRequired,
-        details: string.isRequired,
-        duration: string.isRequired,
-        handleDelete: func.isRequired,
-        handleSubmit: func.isRequired,
-        idx: number.isRequired
     }
 
     getNotes() {
@@ -41,6 +50,7 @@ export class Chunk extends React.Component {
     }
 
     getMidi() {
+        // @ts-ignore
         return chord(this.print()).midi;
     }
 
@@ -60,26 +70,26 @@ export class Chunk extends React.Component {
         return `${this.props.root}${this.props.modifier || ""}${this.props.details}`
     }
 
-    submit(data) {
+    submit(data: object) {
         this.props.handleSubmit(this.props.idx, data);
     }
 
-    handleRoot(event) {
+    handleRoot(event: any) {
         event.preventDefault();
         this.submit({root: event.target.value});
     }
 
-    handleModifier(event) {
+    handleModifier(event: any) {
         event.preventDefault();
         this.submit({modifier: event.target.value});
     }
 
-    handleOctave(event) {
+    handleOctave(event: any) {
         event.preventDefault();
         this.submit({octave: event.target.value});
     }
 
-    handleDetails(event) {
+    handleDetails(event: any) {
         event.preventDefault();
         const value = event.target.value;
         this.setState({showDetailsSomethingElse: value === "SOMETHING ELSE"});
@@ -89,13 +99,13 @@ export class Chunk extends React.Component {
         this.submit({details: value});
     }
 
-    handleCustomDetails(event) {
+    handleCustomDetails(event: any) {
         event.preventDefault();
 
         this.submit({details: event.target.value});
     }
 
-    handleDuration(event) {
+    handleDuration(event: any) {
         event.preventDefault();
         const value = event.target.value;
         this.setState({showDurationSomethingElse: value === "SOMETHING ELSE"});
@@ -105,7 +115,7 @@ export class Chunk extends React.Component {
         this.submit({duration: value});
     }
 
-    handleCustomDuration(event) {
+    handleCustomDuration(event: any) {
         event.preventDefault();
         this.submit({duration: event.target.value});
     }
@@ -162,6 +172,8 @@ export class Chunk extends React.Component {
                     </select>
                     {(this.state.showDurationSomethingElse) ? <input type="text" onChange={(e) => this.handleCustomDuration(e)} /> : null}
                 </label>
+                <button onClick={() => this.props.handleMoveDown(this.props.idx)}>Down</button>
+                <button onClick={() => this.props.handleMoveUp(this.props.idx)}>Up</button>
                 <button onClick={() => this.props.handleDelete(this.props.idx)}>X</button>
             </div>
         );
