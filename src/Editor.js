@@ -11,12 +11,12 @@ const defaultSequence = Object.freeze([
 ]);
 
 export class Editor extends React.Component {
-    constructor(props) {
-        super(props);
+    state = {
+        sequence: [...defaultSequence]
+    }
 
-        this.state = {
-            sequence: [...defaultSequence]
-        }
+    static propType = {
+        
     }
 
     onChange(idx, data) {
@@ -58,7 +58,6 @@ export class Editor extends React.Component {
 
     renderChunks() {
         const items = this.state.sequence.map((c, i) => {
-            console.log(c);
             return (
                 <div key={i}>
                     <Chunk

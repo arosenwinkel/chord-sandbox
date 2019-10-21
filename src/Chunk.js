@@ -1,7 +1,7 @@
 import React from 'react';
 import {chord} from "@tonaljs/chord";
 import Tone from 'tone';
-// import {CHORDS} from "@tonaljs/chord-dictionary"; // full list of chords
+import {string, func, number} from "prop-types";
 
 const detailsMapping = {
     "Major": "M", "Minor": "m", "Dominant Seventh": "7", 
@@ -20,13 +20,20 @@ const durationMapping = {
 };
 
 export class Chunk extends React.Component {
-    constructor(props) {
-        super(props);
+    state = {
+        showDetailsSomethingElse: false,
+        showDurationSomethingElse: false
+    }
 
-        this.state = {
-            showDetailsSomethingElse: false,
-            showDurationSomethingElse: false
-        }
+    static propTypes = {
+        root: string.isRequired,
+        modifier: string,
+        octave: string.isRequired,
+        details: string.isRequired,
+        duration: string.isRequired,
+        handleDelete: func.isRequired,
+        handleSubmit: func.isRequired,
+        idx: number.isRequired
     }
 
     getNotes() {

@@ -1,17 +1,20 @@
 import React from 'react';
 import {scale, reduced, extended, scaleChords, modeNames} from "@tonaljs/scale";
 import {entries} from "@tonaljs/scale-dictionary";
+import {string} from "prop-types";
 
 // show chords in scale
 // show extended chords in scale that contain a note
 
 export class Scale extends React.Component {
-    constructor(props) {
-        super(props); // root, type
+    state = {
+        showDetails: false,
+        showMode: this.NOTES
+    }
 
-        this.state = {
-            showMode: this.NOTES
-        }
+    static propTypes = {
+        root: string.isRequired,
+        type: string.isRequired
     }
 
     NOTES = 1;
@@ -58,19 +61,34 @@ export class Scale extends React.Component {
         this.setState({showMode: this.mapping[event.target.value]});
     }
 
-    render() {
+    renderDetailsSection() {
+        const options = Object.keys(this.mapping).map((k, key) => 
+            <label key={key}>
+                <input type="radio" value={k} checked={this.state.showMode === this.mapping[k]} onChange={(e) => this.onChangeMode(e)} />
+                {k}
+            </label>
+        );
+
         return (
             <div>
-                <p>{this.getName()}</p>
                 <form>
-                    {Object.keys(this.mapping).map((k, key) => 
-                        <label key={key}>
-                            <input type="radio" value={k} checked={this.state.showMode === this.mapping[k]} onChange={(e) => this.onChangeMode(e)} />
-                            {k}
-                        </label>
-                    )}
+                    {options}
                 </form>
                 <p>{this.getDetails()}</p>
+            </div>
+        );
+    }
+
+    render() {
+        let detailsSection = null;
+        if (this.state.showDetails) {
+            detailsSection = this.renderDetailsSection();
+        }
+
+        return (
+            <div>
+                <p onClick={(e) => this.setState(prev => ({showDetails: !prev.showDetails}))}>{this.getName()}</p>
+                {detailsSection}
             </div>
         );
     }

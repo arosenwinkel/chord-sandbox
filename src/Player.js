@@ -1,9 +1,9 @@
 import React from 'react';
 import Tone from 'tone';
-import {chord} from "@tonaljs/chord";
 import {toMidi} from "@tonaljs/midi";
 import {Chunk} from "./Chunk";
 import MIDISounds from 'midi-sounds-react';
+import {array} from "prop-types";
 
 const voices = Object.freeze({
     SYNTH: 1,
@@ -12,14 +12,18 @@ const voices = Object.freeze({
 });
 
 export class Player extends React.Component {
+    state = {
+        voice: voices.SYNTH
+    }
+
     constructor(props) {
         super(props);
 
-        this.state = {
-            voice: voices.SYNTH
-        }
-
         this.synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+    }
+
+    static propTypes = {
+        sequence: array.isRequired
     }
 
     doChord(chord, duration, timelinePos) {
@@ -85,7 +89,7 @@ export class Player extends React.Component {
         Tone.Transport.stop();
     }
 
-    render() {
+    render() {        
         return (
             <div>
                 <div className="controls">
@@ -107,7 +111,9 @@ export class Player extends React.Component {
                         PIANO
                     </label>
                 </form>
-                <MIDISounds ref={(ref) => (this.midiSounds = ref)} appElementName="root" instruments={[3, 269]} />
+                <div style={{display: "none"}}>
+                    <MIDISounds ref={(ref) => (this.midiSounds = ref)} appElementName="root" instruments={[3, 269]} />
+                </div>
             </div>
         );
     }
