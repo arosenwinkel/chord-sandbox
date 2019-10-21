@@ -26,23 +26,28 @@ export class Editor extends React.Component {
 
         sequence[idx] = target;
 
-        this.setState(sequence);
+        this.setState({sequence: sequence});
     }
 
     onDelete(idx) {
         let sequence = [...this.state.sequence];
         sequence.splice(idx);
-        this.setState(sequence);
+        this.setState({sequence: sequence});
     }
 
     onAdd() {
         let sequence = [...this.state.sequence];
-        sequence.push({"root": "C", "octave": "3", "details": "M", "duration": "2n"});
-        this.setState(sequence);
+
+        let newEntry = {};
+        Object.assign(newEntry, sequence[sequence.length - 1]);
+        sequence.push(newEntry);
+        
+        this.setState({sequence: sequence});
     }
 
     handleReset() {
-        this.setState({sequence: [...defaultSequence]});
+        let sequence = [...defaultSequence];
+        this.setState({sequence: sequence});
     }
 
     onPlay(idx) {
@@ -53,8 +58,9 @@ export class Editor extends React.Component {
 
     renderChunks() {
         const items = this.state.sequence.map((c, i) => {
+            console.log(c);
             return (
-                <div>
+                <div key={i}>
                     <Chunk
                         key={i}
                         idx={i} root={c.root} octave={c.octave} 

@@ -104,12 +104,18 @@ export class Chunk extends React.Component {
     }
 
     render() {
+        const root = this.props.root;
+        const modifier = this.props.modifier;
+        const octave = this.props.octave;
+        const details = this.props.details;
+        const duration = this.props.duration;
+
         return (
             <div>
                 <button onClick={() => this.props.handlePlay(this.props.idx)}>Play</button>
                 <label>
                     Root:
-                    <select value={this.props.root} onChange={(e) => this.handleRoot(e)} >
+                    <select value={root} onChange={(e) => this.handleRoot(e)} >
                         {
                             ["A", "B", "C", "D", "E", "F", "G"].map((n, i) => <option key={i} value={n}>{n}</option>)
                         }
@@ -117,7 +123,7 @@ export class Chunk extends React.Component {
                 </label>
                 <label>
                     Modifier:
-                    <select value={this.props.modifier} onChange={(e) => this.handleModifier(e)} >
+                    <select value={modifier} onChange={(e) => this.handleModifier(e)} >
                         {
                             ["", "b", "#"].map((n, i) => <option key={i} value={n}>{n}</option>)
                         }
@@ -125,7 +131,7 @@ export class Chunk extends React.Component {
                 </label>
                 <label>
                     Octave:
-                    <select value={this.props.octave} onChange={(e) => this.handleOctave(e)} >
+                    <select value={octave} onChange={(e) => this.handleOctave(e)} >
                         {
                             ["1", "2", "3", "4", "5"].map((n, i) => <option key={i} value={n}>{n}</option>)
                         }
@@ -133,7 +139,7 @@ export class Chunk extends React.Component {
                 </label>
                 <label>
                     Details:
-                    <select value={this.props.details} onChange={(e) => this.handleDetails(e)} >
+                    <select value={details} onChange={(e) => this.handleDetails(e)} >
                         {
                             Object.keys(detailsMapping).map((n, i) => <option key={i} value={detailsMapping[n]}>{n}</option>)
                         }
@@ -142,7 +148,7 @@ export class Chunk extends React.Component {
                 </label>
                 <label>
                     Duration:
-                    <select value={this.props.duration} onChange={(e) => this.handleDuration(e)} >
+                    <select value={duration} onChange={(e) => this.handleDuration(e)} >
                         {
                             Object.keys(durationMapping).map((n, i) => <option key={i} value={durationMapping[n]}>{n}</option>)
                         }
