@@ -9,6 +9,8 @@
     "@tonaljs/scale-dictionary": "^3.2.3",
     "@types/react": "^16.9.9",
     "create-react-class": "^15.6.3",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "midi-sounds-react": "^1.2.54",
     "prop-types": "^15.7.2",
     "react": "^16.10.2",
